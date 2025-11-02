@@ -1,0 +1,132 @@
+# DAA-PROJECT---Minimum-Spanning-Tree-Kruskal-s-Algorithm---Mumbai-Network
+
+#    Minimum Spanning Tree (Kruskal’s Algorithm) - Mumbai Network
+
+
+import networkx as nx
+import matplotlib.pyplot as plt
+import random
+
+
+# Step 1: Mumbai places (nodes)
+places = [ "Hospital", "School", "Mall", "Police Station", "Railway Station",  "Bus Stop", "Temple", "Restaurant", "Garden", "Fire Station" ]
+
+print("📍 Places in Mumbai:")
+for i, place in enumerate(places, 1):
+    print(f"{i}. {place}")
+
+
+# Step 2: Randomly generate routes between places
+
+edges = []
+for i in range(len(places)):
+    for j in range(i + 1, len(places)):
+        if random.random() < 0.3:  # controls number of connections edges.append((places[i], places[j], random.randint(1, 15)))
+      print("\n Available Routes (with distances):")
+       for u, v, w in edges:
+         print(f"{u} <--> {v} : {w} km")
+
+
+# Step 3: Union-Find structure
+
+class UnionFind:
+    def _init_(self, nodes):
+        self.parent = {node: node for node in nodes}
+
+   def find(self, node):
+        if self.parent[node] != node:
+            self.parent[node] = self.find(self.parent[node])
+        return self.parent[node]
+
+ def union(self, a, b):
+        root_a, root_b = self.find(a), self.find(b)
+        if root_a != root_b:
+            self.parent[root_b] = root_a
+            return True
+        return False
+
+# Step 4: Kruskal’s Algorithm
+
+def kruskal_mst(edges, nodes):
+    edges = sorted(edges, key=lambda x: x[2])
+    uf = UnionFind(nodes)
+    mst = []
+    total_cost = 0
+
+   for u, v, w in edges:
+        if uf.union(u, v):
+            mst.append((u, v, w))
+            total_cost += w
+    return mst, total_cost
+
+# Step 5: Draw MST
+
+def draw_mst(mst, total_cost):
+    G = nx.Graph()
+    G.add_weighted_edges_from(mst)
+    pos = nx.random_layout(G)  # scattered look
+    nx.draw(G, pos, with_labels=True, node_color='lightblue',node_size=1100, font_size=10, font_weight='bold')
+    nx.draw_networkx_edge_labels(G, pos,edge_labels={(u, v): w for u, v, w in mst})
+    plt.title(f"Mumbai Local Network (Total Distance: {total_cost} km)")
+    return G, pos
+
+# Step 6: Path between two places
+
+def find_path(G, start, end):
+    try:
+        return nx.shortest_path(G, source=start, target=end, weight='weight')
+    except nx.NetworkXNoPath:
+        return None
+
+
+# Step 7: Run Kruskal and show result
+
+mst, total_cost = kruskal_mst(edges, places)
+G, pos = draw_mst(mst, total_cost)
+
+print("\n Mumbai Network Ready!")
+print(f"\n Minimum Cost of the entire MST Network: {total_cost} km")
+
+
+# Step 8: Choose start and destination
+
+print("\nChoose where you want to travel:")
+for i, place in enumerate(places, 1):
+    print(f"{i}. {place}")
+
+start_index = int(input("\nEnter start place number: ")) - 1
+end_index = int(input("Enter destination place number: ")) - 1
+
+start = places[start_index]
+end = places[end_index]
+
+
+# Step 9: Show travel path
+
+path = find_path(G, start, end)
+
+if path:
+    print(f"\n Shortest Path from {start} to {end}: {' → '.join(path)}")
+
+   # Calculate total cost of this specific route
+  path_cost = 0
+    for i in range(len(path) - 1):
+        path_cost += G[path[i]][path[i + 1]]['weight']
+
+  print(f" Minimum Cost of this Route: {path_cost} km")
+    print(f" Total Minimum Cost of Entire Network: {total_cost} km")
+
+   nx.draw(G, pos, with_labels=True, node_color='lightgreen', node_size=1100)
+    nx.draw_networkx_edges(G, pos, edgelist=list(zip(path, path[1:])), edge_color='red', width=3)
+    nx.draw_networkx_edge_labels(G, pos, edge_labels={(u, v): G[u][v]['weight'] for u, v in G.edges()})
+    plt.title(f"Route from {start} to {end}")
+else:
+    print(f"\n No path found between {start} and {end} in the MST.")
+
+
+# Step 10: Time Complexity Information
+
+print("\n Time Complexity of Kruskal’s Algorithm:")
+print(" Sorting edges: O(E log E)")
+print(" Union-Find operations: O(E log V)")
+print(" Overall Time Complexity: O(E log E)")rall Time Complexity: O(E log E)")
