@@ -1,0 +1,55 @@
+# -------------------------------------------------------
+#  TASK 2: Apply Union-Find Data Structure for Kruskal's Algorithm
+# -------------------------------------------------------
+
+import random
+
+# Step 1: Define Mumbai places (nodes)
+places = [ "Hospital", "School", "Mall", "Police Station", "Railway Station", "Bus Stop", "Temple", "Restaurant", "Garden", "Fire Station"]
+
+# Step 2: Generate random weighted edges
+edges = []
+for i in range(len(places)):
+    for j in range(i + 1, len(places)):
+        if random.random() < 0.3:
+            edges.append((places[i], places[j], random.randint(1, 15)))
+
+# Step 3: Union-Find Class
+class UnionFind:
+    def _init_(self, nodes):
+        self.parent = {node: node for node in nodes}
+
+    def find(self, node):
+        if self.parent[node] != node:
+            self.parent[node] = self.find(self.parent[node])
+        return self.parent[node]
+
+    def union(self, a, b):
+        root_a, root_b = self.find(a), self.find(b)
+        if root_a != root_b:
+            self.parent[root_b] = root_a
+            return True
+        return False
+
+# Step 4: Kruskal using Union-Find
+def kruskal_mst(edges, nodes):
+    edges = sorted(edges, key=lambda x: x[2])
+    uf = UnionFind(nodes)
+    mst = []
+    total_cost = 0
+
+    for u, v, w in edges:
+        if uf.union(u, v):
+            mst.append((u, v, w))
+            total_cost += w
+    return mst, total_cost
+
+# Step 5: Run Algorithm
+mst, total_cost = kruskal_mst(edges, places)
+
+print(" Edges included in the MST:")
+for u, v, w in mst:
+    print(f"{u} <--> {v} : {w} km")
+
+print(f"\n Total Minimum Cost of Network: {total_cost} km")
+print("\n Time Complexity: O(E log E)")
