@@ -1,0 +1,47 @@
+# -------------------------------------------------------
+#  TASK 1: Implement Kruskal's Algorithm for Minimum Spanning Tree
+# -------------------------------------------------------
+
+import random
+
+# Step 1: Define nodes (places in Mumbai)
+places = [
+    "Hospital", "School", "Mall", "Police Station", "Railway Station" , "Bus Stop", "Temple", "Restaurant", "Garden", "Fire Station"]
+
+print("📍 Places in Mumbai:")
+for i, place in enumerate(places, 1):
+    print(f"{i}. {place}")
+
+# Step 2: Randomly generate weighted edges (routes)
+edges = []
+for i in range(len(places)):
+    for j in range(i + 1, len(places)):
+        if random.random() < 0.3:  # controls number of routes
+            edges.append((places[i], places[j], random.randint(1, 15)))
+
+print("\n🛣 Available Routes (with distances):")
+for u, v, w in edges:
+    print(f"{u} <--> {v} : {w} km")
+
+# Step 3: Simple Kruskal Algorithm (without Union-Find)
+def kruskal_mst(edges):
+    edges = sorted(edges, key=lambda x: x[2])
+    mst = []
+    total_cost = 0
+
+    connected = set()
+    for u, v, w in edges:
+        if u not in connected or v not in connected:
+            mst.append((u, v, w))
+            total_cost += w
+            connected.add(u)
+            connected.add(v)
+    return mst, total_cost
+
+mst, total_cost = kruskal_mst(edges)
+
+print("\n Edges included in the Minimum Spanning Tree:")
+for u, v, w in mst:
+    print(f"{u} <--> {v} : {w} km")
+
+print(f"\n Total Minimum Cost: {total_cost} km")
