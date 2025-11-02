@@ -1,0 +1,32 @@
+# -------------------------------------------------------
+# TASK 3: Visualize Network Connection Paths showing Total Cost
+# -------------------------------------------------------
+
+import networkx as nx
+import matplotlib.pyplot as plt
+
+# Step 1: Example MST edges and total cost
+mst = [
+    ("Hospital", "Mall", 4),
+    ("Mall", "School", 3),
+    ("School", "Temple", 6),
+    ("Temple", "Restaurant", 5),
+    ("Restaurant", "Bus Stop", 2)
+]
+total_cost = sum([w for _, _, w in mst])
+
+# Step 2: Create and visualize graph
+G = nx.Graph()
+G.add_weighted_edges_from(mst)
+pos = nx.random_layout(G)
+
+nx.draw(G, pos, with_labels=True, node_color='lightblue', node_size=1100, font_size=10, font_weight='bold')
+
+nx.draw_networkx_edge_labels(G, pos, edge_labels={(u, v): w for u, v, w in mst})
+
+plt.title(f" Mumbai Minimum Spanning Network\nTotal Cost: {total_cost} km")
+plt.show()
+
+# Step 3: Display total cost info
+print(" Visualized Network with Total Minimum Cost")
+print(f" Total Minimum Cost of Connection: {total_cost} km")
